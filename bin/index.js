@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
-const exec = require('child_process').exec;
+const execSync = require('child_process').execSync;
 const yargs = require('yargs');
 
 const options = yargs.usage('Usage: -n <name>').options({
@@ -34,16 +34,16 @@ const options = yargs.usage('Usage: -n <name>').options({
 const dir = `./${options.name}`;
 
 const createProjectDirectory = () => {
+  console.log(`✏️  Creating project directory: ${options.name}`);
   if (fs.existsSync(dir)) {
     throw new Error('Directory with that name already exists.');
   } else {
     fs.mkdirSync(dir);
-    console.log(`Project directory "${dir}" created.`);
   }
 };
 
 const createPackageDotJSON = () => {
-  console.log('Creating package.json');
+  console.log('✏️  Creating package.json');
   fs.writeFileSync(
     `${dir}/package.json`,
     JSON.stringify(
@@ -61,12 +61,30 @@ const createPackageDotJSON = () => {
   );
 };
 
+const createDotENV = () => {
+  if (options.withFirebase) {
+    console.log('✏️  Creating .env');
+    fs.writeFileSync(
+      `${dir}/.env`,
+      `NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_DATABASE_URL=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
+`
+    );
+  }
+};
+
 const createNetlifyDotTOML = () => {
   if (!options.forNetlify) {
     return;
   }
 
-  console.log('Creating netlify.toml');
+  console.log('✏️  Creating netlify.toml');
   fs.writeFileSync(
     `${dir}/netlify.toml`,
     `[build]
@@ -76,14 +94,14 @@ const createNetlifyDotTOML = () => {
   );
 };
 
-const setUpStylesheetsDirectory = () => {
-  console.log('Setting up stylesheets directory');
-  const stylesheetsDir = `${dir}/stylesheets`;
-  fs.mkdirSync(stylesheetsDir);
+const setUpStylesDirectory = () => {
+  console.log('📁 Setting up styles directory');
+  const stylesDir = `${dir}/styles`;
+  fs.mkdirSync(stylesDir);
 
-  console.log('  Creating stylesheets/global.scss');
+  console.log('  ✏️  Creating styles/global.scss');
   fs.writeFileSync(
-    `${stylesheetsDir}/global.scss`,
+    `${stylesDir}/global.scss`,
     `* {
   box-sizing: border-box;
 }
@@ -97,12 +115,12 @@ body {
 };
 
 const setUpPagesDirectory = () => {
-  console.log('Setting up pages directory');
+  console.log('📁 Setting up pages directory');
   const pagesDir = `${dir}/pages`;
   fs.mkdirSync(pagesDir);
 
   let appJSContents = '';
-  console.log('  Creating pages/_app.js');
+  console.log('  ✏️  Creating pages/_app.js');
   if (options.withFontAwesome) {
     appJSContents = `import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
@@ -110,7 +128,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 `;
   }
 
-  appJSContents += "import '../stylesheets/global.scss';\n";
+  appJSContents += "import '../styles/global.scss';\n";
 
   if (options.withFontAwesome) {
     appJSContents += '\nlibrary.add(fas);\n';
@@ -123,7 +141,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 
   fs.writeFileSync(`${pagesDir}/_app.js`, appJSContents);
 
-  console.log('  Creating pages/index.js');
+  console.log('  ✏️  Creating pages/index.js');
   fs.writeFileSync(
     `${pagesDir}/index.js`,
     `const HomePage = () => <h1>Hello, HomePage!</h1>;
@@ -134,15 +152,15 @@ export default HomePage;
 };
 
 const setUpLibDirectory = () => {
-  console.log('Setting up lib directory');
+  console.log('📁 Setting up lib directory');
   const libDir = `${dir}/lib`;
   fs.mkdirSync(libDir);
 
-  console.log('  Creating lib/api.js');
+  console.log('  ✏️  Creating lib/api.js');
   fs.writeFileSync(`${libDir}/api.js`, '// Do your api operations here\n');
 
   if (options.withFirebase) {
-    console.log('  Creating lib/firebase.js');
+    console.log('  ✏️  Creating lib/firebase.js');
     fs.writeFileSync(
       `${libDir}/firebase.js`,
       `import firebase from 'firebase/app';
@@ -169,7 +187,7 @@ function initFirebase() {
 };
 
 const installPackages = () => {
-  const packages = ['next', 'react', 'react-dom', 'sass'];
+  const packages = ['next', 'react@^16.12.0', 'react-dom@^16.12.0', 'sass'];
   if (options.withFirebase) {
     packages.push('firebase');
   }
@@ -182,35 +200,20 @@ const installPackages = () => {
 
   const packagesAsCommaList = packages.join(', ');
   const packagesAsSpaceList = packages.join(' ');
-  console.log(`Installing packages: ${packagesAsCommaList}`);
-  exec(`npm install ${packagesAsSpaceList}`, { cwd: dir }, () => {
-    console.log('Finished! 🎉');
-  });
-};
-
-const createDotENV = () => {
-  if (options.withFirebase) {
-    console.log('Creating .env');
-    fs.writeFileSync(
-      `${dir}/.env`,
-      `NEXT_PUBLIC_FIREBASE_API_KEY=
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
-NEXT_PUBLIC_FIREBASE_DATABASE_URL=
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
-NEXT_PUBLIC_FIREBASE_APP_ID=
-NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
-`
-    );
-  }
+  console.log(`🔧 Installing packages: ${packagesAsCommaList}`);
+  execSync(`npm install ${packagesAsSpaceList}`, { cwd: dir });
 };
 
 createProjectDirectory();
 createPackageDotJSON();
 createDotENV();
 createNetlifyDotTOML();
-setUpStylesheetsDirectory();
+setUpStylesDirectory();
 setUpPagesDirectory();
 setUpLibDirectory();
 installPackages();
+
+console.log('\nFinished! 🎉');
+console.log('Run these commands to start developing:');
+console.log(`  cd ${options.name}`);
+console.log('  npm run dev');
