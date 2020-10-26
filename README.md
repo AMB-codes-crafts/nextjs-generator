@@ -13,4 +13,6 @@ I created this because I got tired of creating the same files over and over agai
 
 ## Usage
 
+```
 nextjs-generator -n my-app --fN --wF --wFA
+```
