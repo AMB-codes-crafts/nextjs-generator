@@ -1,0 +1,17 @@
+{
+  "name": "nextjs-template",
+  "version": "1.0.0",
+  "description": "A CLI for generating Next.js project templates.",
+  "main": "./bin/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "AshleeMBoyer",
+  "license": "ISC",
+  "bin": {
+    "nextjs-generator": "./bin/index.js"
+  },
+  "dependencies": {
+    "yargs": "^16.1.0"
+  }
+}
