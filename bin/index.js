@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
-const execSync = require('child_process').execSync;
+const exec = require('child_process').exec;
 const yargs = require('yargs');
 
 const options = yargs.usage('Usage: -n <name>').options({
@@ -201,7 +201,12 @@ const installPackages = () => {
   const packagesAsCommaList = packages.join(', ');
   const packagesAsSpaceList = packages.join(' ');
   console.log(`🔧 Installing packages: ${packagesAsCommaList}`);
-  execSync(`npm install ${packagesAsSpaceList}`, { cwd: dir });
+  exec(`npm install ${packagesAsSpaceList}`, { cwd: dir }, () => {
+    console.log('\nFinished! 🎉');
+    console.log('Run these commands to start developing:');
+    console.log(`  cd ${options.name}`);
+    console.log('  npm run dev');
+  });
 };
 
 createProjectDirectory();
@@ -212,8 +217,3 @@ setUpStylesDirectory();
 setUpPagesDirectory();
 setUpLibDirectory();
 installPackages();
-
-console.log('\nFinished! 🎉');
-console.log('Run these commands to start developing:');
-console.log(`  cd ${options.name}`);
-console.log('  npm run dev');
