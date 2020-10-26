@@ -2,14 +2,26 @@
   "name": "nextjs-template",
   "version": "1.0.0",
   "description": "A CLI for generating Next.js project templates.",
-  "main": "./bin/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "homepage": "https://github.com/AMB-codes-crafts/nextjs-generator#nextjs-generator",
+  "bugs": {
+    "email": "hello@ashleemboyer.com"
   },
-  "author": "AshleeMBoyer",
   "license": "ISC",
+  "author": {
+    "name": "Ashlee M Boyer",
+    "email": "hello@ashleemboyer.com",
+    "url": "https://ashleemboyer.com"
+  },
+  "main": "./bin/index.js",
   "bin": {
     "nextjs-generator": "./bin/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AMB-codes-crafts/nextjs-generator"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "yargs": "^16.1.0"
